@@ -1,0 +1,21 @@
+Please do NOT change any code right now. I only want you to explain, in simple English, how uploading and analyzing a LONG video works in this app today. Read the code and tell me exactly what it does, not what it should do.
+
+Please answer these questions:
+
+1. If I upload a long video (for example 500 MB or 2 GB) for health and safety analysis, what are the exact steps from the moment I pick the file to the moment I get the analysis? Name the files and functions involved.
+
+2. Where does the video go? Does it upload straight from the browser to a storage service or to the AI provider (for example Gemini Files API, a bucket, or some other storage), or does it pass through our own server first? Name the service.
+
+3. Is there a "ticket" step (a signed URL, upload token, or resumable upload session) that the server creates so the browser can upload directly? If yes, which file creates it, what does it check before creating it (for example, whether the user is logged in), and does the API key ever reach the browser?
+
+4. After the upload, how does the analysis start? Does the server get only a reference (a file URL or file ID), or does it receive the whole video?
+
+5. Does the 4 MB limit you added apply to video uploads? Show me exactly which routes have that limit, and which routes do not. If the 4 MB limit would block long videos, say so clearly.
+
+6. What are the real maximum limits for video size and video length in this setup (from our code, from the storage service, and from the AI provider)?
+
+7. Will this video flow work on Vercel as it is, or does anything in it depend on the Expo API routes that Vercel skips? What happens if the analysis takes longer than Vercel's function time limit?
+
+8. Does the same direct-upload method also work for photos and documents? If not, how do those work?
+
+At the end, give me a short summary: "Long videos: working / partly working / not working on Vercel", and list exactly what needs to be fixed, if anything. Do not fix anything yet. Just report.

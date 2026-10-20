@@ -1,0 +1,44 @@
+Please do the following. Use the existing server login/session check for every route. Do not rebuild the login. Remove all rate limiting from routes that call AI providers (I'm the only user), except a very lenient one on the login route that never blocks a normal login.
+
+PART 1: ONE METHOD FOR ALL PHOTOS AND VIDEOS
+- Every feature that handles photos or videos (Video Analysis, Photo Analysis, chat attachments, reports, toolkit AND the Emergency feature) must use the SAME Gemini upload-session "ticket" method. The file goes directly from the browser or device to the Gemini Files API. Our server only creates the upload session and later receives the Gemini file reference, never the file itself.
+- Use Gemini to analyze photos and videos at every cost. Rotate through ALL Gemini keys (including multiple and numbered keys) and retry before giving up.
+- Use the local Ollama fallback ONLY when no Gemini key has any quota left or all Gemini keys have failed. In that case, extract frames from the video in the browser (small images), and send those frames to Ollama. Do not use Ollama in any other situation. Tell the user clearly when the fallback is used.
+- IMPORTANT: Ollama runs on my own computer, and the Vercel website cannot reach it without a tunnel. Tell me honestly whether the Ollama fallback can work on the live Vercel site, what setup it needs (for example a tunnel URL as an environment variable), and what happens if it is not reachable. Show a clear message to the user if neither Gemini nor Ollama is available.
+
+PART 2: LONG VIDEO FLOW
+2. Move the Gemini upload-session ("ticket") route into the root api/ folder as a Vercel handler so it is deployed. Move any other route that currently sits only in the skipped Expo API folder.
+3. Protect it with the existing session check. The Gemini key stays on the server only.
+4. After the upload finishes, poll the Gemini file status and wait until it is ready before analysis. Show "Processing video..." to the user.
+5. Fix the long-analysis timeout. According to Vercel's current documentation, the Hobby plan allows functions up to 300 seconds (5 minutes) with Fluid Compute. Please verify this in Vercel's current docs and do the following:
+- Set maxDuration to 300 seconds in vercel.json for every route that analyzes photos or videos, including emergency, and make sure the code and config work with Fluid Compute.
+- Make the browser timeout for these routes longer than the server limit (for example 310 seconds), so the browser never gives up before the server does.
+- Stream the analysis response so the connection stays alive while Gemini works. If the handler runs in the Edge runtime, note that it must start sending a response within 25 seconds, and use the Node runtime instead if that causes problems.
+- Waiting for Gemini to finish preparing the uploaded file must NOT happen inside one long request. Use short, quick status checks every few seconds from the browser.
+- If a video is so long that analysis might exceed 300 seconds, split the work into parts (for example, analyzing the video in segments and combining the results), so it never hits the limit. Tell me what you built and what the longest video is that it can handle.
+- The 40-second limit in the emergency route applies only to quick text and photo replies, not to long video analysis.
+6. Make the upload resumable: save the session, retry on a network drop, show a progress bar and clear errors.
+7. Remove or fix the Video Analysis screen message about a "frame extraction and Local Llama fallback" so it matches what the app really does.
+8. Keep photos working the same way. Keep the base64 fallback only for tiny files, with a clear message if a file is too big for it.
+9. NO artificial size limit on videos or photos in our own code.
+
+PART 3: EMERGENCY FEATURE
+10. Emergency photos and videos must use the same ticket method and the same Gemini-first, Ollama-last rule as above. The 40-second wait must apply only to normal text and photo replies, not block long video analysis.
+
+PART 4: ENVIRONMENT VARIABLES TABLE
+At the end, give me a table right here in the chat with ALL the environment variables I must add in Vercel. Columns:
+- Variable name (exact)
+- What it is
+- What value to put (use placeholders like paste-your-key-here, never real values)
+- Example format
+- Secret / Sensitive: yes or no
+- Required or optional
+Include EVERY variable: the admin username, the admin password hash, SESSION_SECRET, all provider keys (Gemini, Groq, Cerebras, OpenRouter, NVIDIA, Serper, and any others), EXPO_PUBLIC_USE_SERVER_PROXY, and any Ollama or tunnel variable.
+Also explain in the table or right under it:
+- How to add MULTIPLE keys for one provider: comma-separated in one variable (for example key1,key2,key3), and the numbered way (_1, _2, _3).
+- Exactly what to type for the server proxy variable.
+- Step by step, how to generate the SHA-256 hash of my password and a strong SESSION_SECRET on my own computer.
+- Which variables must be Sensitive and which environments (Production, Preview, Development) to enable.
+Then add a ready-to-paste block in NAME=value format with placeholders for Vercel's "Import .env" option.
+
+When done, tell me in simple English what you changed, what you tested, and what can't work on the Vercel free plan.

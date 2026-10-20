@@ -1,0 +1,10 @@
+Enhance API key management and provider status visibility
+
+Refactor API utilities to dynamically read environment variables for API keys and introduce a new endpoint for debugging key counts. Update chat, search, and transcription services to dynamically handle multiple API keys per provider. Modify the models screen to dynamically display provider and key status, removing hardcoded values.
+
+Replit-Commit-Author: Agent
+Replit-Commit-Session-Id: d58ca24c-e36f-4354-bc64-0ea0312bf944
+Replit-Commit-Checkpoint-Type: full_checkpoint
+Replit-Commit-Event-Id: 6a52549e-97c6-44dd-b67d-a26a0be44f4f
+Replit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/d6e8e648-1fe4-4413-8d91-1954c7a76fad/d58ca24c-e36f-4354-bc64-0ea0312bf944/NoWrMhE
+Replit-Helium-Checkpoint-Created: true

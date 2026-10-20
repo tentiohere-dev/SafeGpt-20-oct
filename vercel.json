@@ -1,0 +1,17 @@
+{
+  "buildCommand": "cd safegpt && npm install --legacy-peer-deps && NODE_OPTIONS=--max-old-space-size=4096 npx expo export --platform web",
+  "outputDirectory": "safegpt/dist",
+  "framework": null,
+  "functions": {
+    "api/chat.ts":       { "maxDuration": 60 },
+    "api/search.ts":     { "maxDuration": 30 },
+    "api/transcribe.ts": { "maxDuration": 60 },
+    "api/tts.ts":        { "maxDuration": 30 },
+    "api/local.ts":      { "maxDuration": 30 },
+    "api/status.ts":     { "maxDuration": 10 },
+    "api/emergency.ts":  { "maxDuration": 60 }
+  },
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}

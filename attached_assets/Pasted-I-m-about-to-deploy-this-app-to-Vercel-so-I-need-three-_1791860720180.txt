@@ -1,0 +1,88 @@
+I'm about to deploy this app to Vercel, so I need three things done carefully. Please do them in order: Task 1, then Task 2, then Task 3. Don't break any existing functionality, and don't make unrelated changes.
+
+TASK 1: Add a "Hide model details" feature
+
+Right now, every AI reply in the chat shows a label at the top with the provider and exact model name (for example, "Grok" and "GPT OSS 120B"). I want to be able to hide this label in two ways:
+
+1. Global setting
+- In the app's Settings page, add a toggle switch called "Show model name and details".
+- When it is ON, the provider and model label shows at the top of each chat response, as it does now.
+- When it is OFF, the label is hidden everywhere in the chat.
+- Save this setting so it persists after a page refresh and after closing and reopening the app. Use the same way the app already saves other settings.
+
+2. Quick toggle inside the chat
+- Next to the provider and model label at the top of the chat, add a small eye icon button. It should work like the show/hide password icon: click it to hide the model details, click it again to show them.
+- This should be a quick shortcut, so I don't have to open Settings. It must stay in sync with the Settings toggle, meaning changing one updates the other.
+- When the details are hidden, a small eye icon should still be visible so I can bring them back with one click. Add a tooltip such as "Show model details" or "Hide model details".
+
+This is only a display change. It must not affect how the AI answers or which model is actually used.
+
+TASK 2: Full audit of the app before deployment
+
+Please do a deep, thorough audit of the entire app. Take as much time as you need. Go through every feature one by one and test that it works exactly as we designed it, including but not limited to:
+- Chat (sending messages, receiving responses, switching between providers and models, chat history, creating, renaming and deleting chats)
+- Voice features (speech input, voice output, any audio handling)
+- Image features (generation, upload, display, download)
+- Video features
+- Login and logout, sessions, and any account or user handling
+- Settings (every option saves and applies correctly, including the new one from Task 1)
+- File uploads or downloads, if the app has them
+- Error handling: what the user sees when an API call fails, times out, or hits a rate limit
+
+For every problem you find, fix it properly and don't just work around it. At the end, give me a clear report listing what you tested, what was broken, what you fixed, and anything you could not fix and why.
+
+Also check that the app is ready for deployment on Vercel:
+- API keys and secrets must NEVER appear in frontend or browser code, in API responses, in logs, or in the repository. All calls to AI providers must go through server-side code that reads the keys from environment variables.
+- Make sure no environment variable that holds a secret uses a browser-exposed prefix (such as NEXT_PUBLIC_ or VITE_).
+- Every server API route must check that the user is logged in before it does anything that uses an API key.
+- List every environment variable I will need to add in Vercel, with a short description of each (names only, no values).
+- Check for anything that works on Replit but will break on Vercel, such as local file storage, long-running processes, a database or file system dependency, or request timeouts (Vercel's free plan limits server functions to 10 seconds by default, up to 60 seconds). Tell me about each of these and fix what you can.
+- Remove leftover debug code, test data and unused files, and make sure the production build runs without errors.
+
+TASK 3: Make the whole app fully responsive on every device
+
+The app must work properly on phones (iPhone and Android), tablets (portrait and landscape) and laptops/desktops, and adapt automatically to whatever screen size it is opened on. Go through every page and every feature (chat, settings, voice, image, video, login, menus, popups, sidebars, buttons, forms, everything) and make sure of the following:
+
+- Nothing overflows or goes outside its box or off the screen: no text, buttons, images, tables, code blocks, long words, long URLs or model names. Use proper wrapping, scrolling inside the element where needed, and flexible layouts.
+- There is no sideways scrolling of the whole page on any screen size.
+- Layouts adapt properly at every common size, from small phones (about 320px wide) through large phones, tablets, laptops and large desktop monitors. Use responsive design (flexible units, flexbox/grid, media queries) instead of fixed pixel widths.
+- Sidebars, menus and navigation should change sensibly on small screens (for example, turning into a collapsible or slide-out menu).
+- Buttons and clickable elements should be big enough to tap comfortably on a touch screen.
+- The on-screen keyboard on mobile must not hide the chat input box or break the layout. Handle mobile browser quirks such as the changing address bar height (use dynamic viewport units like dvh instead of 100vh) and the notch/safe areas on iPhones.
+- Both portrait and landscape orientation must work.
+- Every function (voice, image, video, chat, settings) must be fully usable on a phone, not just visible.
+
+Disable double-tap zoom:
+- Double-tapping anywhere in the app, even accidentally, must NOT zoom the page. Use "touch-action: manipulation" on the page and make sure the viewport meta tag is set up correctly.
+- Also prevent iOS Safari from auto-zooming when I tap into a text input (for example, make sure input fields use a font size of at least 16px on mobile).
+- The layout must stay stable and not shift or zoom unexpectedly when tapping, typing or rotating the phone.
+
+Test the final result at multiple screen sizes (small phone, large phone, tablet, laptop, large desktop) and fix every problem you find. In your final report, list which screen sizes you checked and what you fixed.
+
+I'm deploying this, so I don't want any mess. Everything must be working, stable, clean and looking good on every device when you're done.
+
+I'm about to deploy this app to Vercel and need to add all the environment variables there. Please scan the entire project (server code, API routes, config files, everything) and give me the complete list of environment variables the app needs, right here in the chat.
+
+Format it as a table or list that I can copy and paste straight into Vercel. For each variable, give me:
+
+1. The exact variable name, spelled exactly as the code reads it (for example, GROQ_API_KEY).
+2. What it is for, in a few words (for example, "Groq API key for chat").
+3. What value I need to put in: either "paste my real API key from [provider name]", or a specific fixed value if it's a setting (for example, "true" or "1"), or a random secret string I need to generate (and tell me how to generate it).
+4. Where it is used: server-side only, or also in browser code. If any variable is used in browser code, tell me, because that's a security risk, and fix it so it is server-side only.
+5. Whether it is required or optional.
+
+MULTIPLE API KEYS:
+My app supports using more than one API key for the same provider (for example, 3 or 4 Grok/Groq keys, or several keys for other providers). Please explain clearly, in the chat, exactly how to add multiple keys in Vercel for each provider that supports it:
+- Tell me the exact variable names the code expects for multiple keys (for example, GROQ_API_KEY_1, GROQ_API_KEY_2, GROQ_API_KEY_3, or a single variable with keys separated by commas). Use whatever format the code actually reads.
+- Tell me whether I need to add each key as its own separate variable, or put them all in one variable, and show me an example of each key line with a placeholder value.
+- Tell me the maximum number of keys the app supports per provider, and whether I can add more later without changing code.
+- Explain how the app uses the keys (for example, rotating between them, or switching to the next key when one hits a rate limit), so I know what to expect.
+- Tell me whether the app also lets me add keys from inside the app's Settings, and if so, explain how that differs from the Vercel variables, and which one takes priority if I use both. Warn me if keys saved in the app's own storage will not persist on Vercel.
+- If the current code does not handle multiple keys in a clean, consistent way, fix it so it does.
+
+Also:
+- Include every variable, including the database URL, session secret, login/auth secrets, and any other API keys for chat, voice, image, video and any other service.
+- Do NOT write out my real API key values in the chat. Use placeholders like "paste your key here".
+- At the end, give me a ready-to-copy block in NAME=value format (with placeholders), including examples for the multiple-key variables, so I can paste it into Vercel's "Import .env" option.
+- Tell me which Vercel environments to enable each variable for (Production, Preview, Development), and which ones I should mark as "Sensitive".
+- If any variable name in the code is inconsistent, missing or unused, point it out and fix it.
